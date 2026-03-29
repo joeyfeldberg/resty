@@ -1,5 +1,10 @@
 import Foundation
 
+enum BreakBackgroundMode: String, Codable, CaseIterable {
+    case hills
+    case image
+}
+
 struct AppSettings: Codable, Equatable {
     static let legacyFocusBundleIdentifiers: [String] = [
         "com.apple.dt.Xcode",
@@ -27,6 +32,8 @@ struct AppSettings: Codable, Equatable {
     var smartPauseFocusApps: Bool = false
     var focusBundleIdentifiers: [String] = []
     var customBreakMessage: String = "Step back and reset for a moment"
+    var breakBackgroundMode: BreakBackgroundMode = .hills
+    var customBreakBackgroundImagePath: String = ""
 
     func isWithinWorkingHours(at date: Date, calendar: Calendar = .current) -> Bool {
         guard workingHoursEnabled else { return true }
@@ -43,5 +50,9 @@ struct AppSettings: Codable, Equatable {
         }
 
         return currentMinutes >= workingHoursStartMinutes || currentMinutes < workingHoursEndMinutes
+    }
+
+    var hasCustomBreakBackgroundImage: Bool {
+        !customBreakBackgroundImagePath.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
 }

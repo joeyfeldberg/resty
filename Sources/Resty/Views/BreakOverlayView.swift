@@ -1,4 +1,5 @@
 import SwiftUI
+import AppKit
 
 struct BreakOverlayView: View {
     @ObservedObject var coordinator: BreakCoordinator
@@ -6,18 +7,7 @@ struct BreakOverlayView: View {
 
     var body: some View {
         ZStack(alignment: .bottomTrailing) {
-            VisualStyle.breakBackground
-                .ignoresSafeArea()
-                .overlay(
-                    HStack(spacing: 0) {
-                        ForEach(0..<8, id: \.self) { index in
-                            Rectangle()
-                                .fill(Color.white.opacity(index.isMultiple(of: 2) ? 0.06 : 0.03))
-                                .rotationEffect(.degrees(12))
-                                .offset(x: CGFloat(index * 20))
-                        }
-                    }
-                )
+            breakBackground
 
             VStack(alignment: .leading, spacing: 20) {
                 Text("Resty")
@@ -69,6 +59,20 @@ struct BreakOverlayView: View {
                     }
                 )
                 .padding(34)
+        }
+    }
+
+    @ViewBuilder
+    private var breakBackground: some View {
+        if settingsStore.settings.breakBackgroundMode == .image,
+           let image = NSImage(contentsOfFile: settingsStore.settings.customBreakBackgroundImagePath) {
+            Image(nsImage: image)
+                .resizable()
+                .scaledToFill()
+                .ignoresSafeArea()
+                .overlay(Color.black.opacity(0.22))
+        } else {
+            BreakBackdropView()
         }
     }
 }

@@ -1,4 +1,5 @@
 import SwiftUI
+import AppKit
 
 private enum SettingsSection: String, CaseIterable, Identifiable {
     case breaks = "Breaks"
@@ -158,6 +159,38 @@ struct SettingsView: View {
             }
 
         case .appearance:
+            SettingsCard(title: "Break Background", detail: "Choose the built-in hills scene or a custom image from disk.") {
+                Picker("Break background", selection: binding(\.breakBackgroundMode)) {
+                    ForEach(BreakBackgroundMode.allCases, id: \.self) { mode in
+                        Text(backgroundModeTitle(mode)).tag(mode)
+                    }
+                }
+                .pickerStyle(.segmented)
+
+                if settingsStore.settings.breakBackgroundMode == .image {
+                    VStack(alignment: .leading, spacing: 12) {
+                        HStack(spacing: 10) {
+                            Button("Choose Image…") {
+                                chooseBreakBackgroundImage()
+                            }
+                            .buttonStyle(.borderedProminent)
+                            .tint(.white.opacity(0.18))
+
+                            Button("Clear") {
+                                clearBreakBackgroundImage()
+                            }
+                            .buttonStyle(.bordered)
+                            .disabled(!settingsStore.settings.hasCustomBreakBackgroundImage)
+                        }
+
+                        Text(currentBackgroundImageLabel)
+                            .font(.system(size: 13, weight: .medium, design: .rounded))
+                            .foregroundStyle(Color.white.opacity(0.58))
+                    }
+                    .padding(.top, 4)
+                }
+            }
+
             SettingsCard(title: "Copy", detail: "The message shown in reminders and on the break screen.") {
                 TextField("Step back and reset for a moment", text: binding(\.customBreakMessage), axis: .vertical)
                     .textFieldStyle(.plain)
@@ -311,6 +344,43 @@ struct SettingsView: View {
                     .filter { !$0.isEmpty }
             }
         )
+    }
+
+    private var currentBackgroundImageLabel: String {
+        let path = settingsStore.settings.customBreakBackgroundImagePath
+        if path.isEmpty {
+            return "No image selected."
+        }
+
+        return URL(fileURLWithPath: path).lastPathComponent
+    }
+
+    private func backgroundModeTitle(_ mode: BreakBackgroundMode) -> String {
+        switch mode {
+        case .hills:
+            return "Hills"
+        case .image:
+            return "Image"
+        }
+    }
+
+    private func chooseBreakBackgroundImage() {
+        let panel = NSOpenPanel()
+        panel.title = "Choose Break Background"
+        panel.prompt = "Use Image"
+        panel.canChooseFiles = true
+        panel.canChooseDirectories = false
+        panel.allowsMultipleSelection = false
+        panel.allowedContentTypes = [.image]
+
+        guard panel.runModal() == .OK, let url = panel.url else { return }
+        settingsStore.settings.customBreakBackgroundImagePath = url.path
+        settingsStore.settings.breakBackgroundMode = .image
+    }
+
+    private func clearBreakBackgroundImage() {
+        settingsStore.settings.customBreakBackgroundImagePath = ""
+        settingsStore.settings.breakBackgroundMode = .hills
     }
 }
 
