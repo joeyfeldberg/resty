@@ -106,6 +106,7 @@ struct SettingsView: View {
                 toggleRow("Enable working hours", isOn: binding(\.workingHoursEnabled))
                 timePickerRow("Start time", selection: timeBinding(\.workingHoursStartMinutes))
                 timePickerRow("End time", selection: timeBinding(\.workingHoursEndMinutes))
+                weekdaySelectionRow()
             }
 
         case .smartPause:
@@ -283,6 +284,38 @@ struct SettingsView: View {
             )
     }
 
+    private func weekdaySelectionRow() -> some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Text("Active days")
+                .font(.system(size: 15, weight: .semibold, design: .rounded))
+                .foregroundStyle(.white)
+
+            HStack(spacing: 8) {
+                ForEach(WorkingWeekday.allCases) { weekday in
+                    Button {
+                        toggleWorkingDay(weekday)
+                    } label: {
+                        Text(weekday.shortTitle)
+                            .font(.system(size: 13, weight: .semibold, design: .rounded))
+                            .foregroundStyle(isWorkingDaySelected(weekday) ? .black : .white.opacity(0.80))
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 9)
+                            .background(
+                                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                                    .fill(isWorkingDaySelected(weekday) ? Color.white.opacity(0.92) : Color.white.opacity(0.08))
+                            )
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                                    .stroke(Color.white.opacity(isWorkingDaySelected(weekday) ? 0 : 0.08), lineWidth: 1)
+                            )
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+        }
+        .padding(.vertical, 4)
+    }
+
     private func permissionRow(_ title: String, status: PermissionStatus, detail: String, action: @escaping () -> Void) -> some View {
         HStack {
             VStack(alignment: .leading, spacing: 3) {
@@ -381,6 +414,18 @@ struct SettingsView: View {
     private func clearBreakBackgroundImage() {
         settingsStore.settings.customBreakBackgroundImagePath = ""
         settingsStore.settings.breakBackgroundMode = .hills
+    }
+
+    private func isWorkingDaySelected(_ weekday: WorkingWeekday) -> Bool {
+        settingsStore.settings.workingDays.contains(weekday.rawValue)
+    }
+
+    private func toggleWorkingDay(_ weekday: WorkingWeekday) {
+        if settingsStore.settings.workingDays.contains(weekday.rawValue) {
+            settingsStore.settings.workingDays.remove(weekday.rawValue)
+        } else {
+            settingsStore.settings.workingDays.insert(weekday.rawValue)
+        }
     }
 }
 

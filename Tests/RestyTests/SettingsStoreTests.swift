@@ -12,6 +12,7 @@ final class SettingsStoreTests: XCTestCase {
         store.settings.customBreakMessage = "Look away and reset"
         store.settings.breakBackgroundMode = .image
         store.settings.customBreakBackgroundImagePath = "/tmp/hills.png"
+        store.settings.workingDays = [2, 4, 6]
         store.settings.focusBundleIdentifiers = ["com.apple.Safari", "com.apple.dt.Xcode"]
 
         let reloaded = SettingsStore(defaults: defaults)
@@ -20,6 +21,7 @@ final class SettingsStoreTests: XCTestCase {
         XCTAssertEqual(reloaded.settings.customBreakMessage, "Look away and reset")
         XCTAssertEqual(reloaded.settings.breakBackgroundMode, .image)
         XCTAssertEqual(reloaded.settings.customBreakBackgroundImagePath, "/tmp/hills.png")
+        XCTAssertEqual(reloaded.settings.workingDays, [2, 4, 6])
         XCTAssertEqual(reloaded.settings.focusBundleIdentifiers, ["com.apple.Safari", "com.apple.dt.Xcode"])
     }
 
