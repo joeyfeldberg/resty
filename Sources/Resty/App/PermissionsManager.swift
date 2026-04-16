@@ -202,6 +202,15 @@ final class PermissionsManager: ObservableObject {
             """
         }
 
+        if target.scriptName == "Firefox" {
+            return """
+            tell application "Firefox"
+                if (count of windows) is 0 then return ""
+                return name of front window
+            end tell
+            """
+        }
+
         return """
         tell application "\(target.scriptName)"
             if (count of windows) is 0 then return ""

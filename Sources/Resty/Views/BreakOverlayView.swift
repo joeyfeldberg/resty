@@ -44,14 +44,11 @@ struct BreakOverlayView: View {
                 .frame(width: 300, height: 80)
                 .overlay(
                     HStack(spacing: 14) {
-                        Circle()
-                            .fill(LinearGradient(colors: [.pink, .orange], startPoint: .bottomLeading, endPoint: .topTrailing))
+                        RestyIconImage(icon: .eyeClosed, size: 28)
+                            .foregroundStyle(.white.opacity(0.92))
                             .frame(width: 40, height: 40)
-                            .overlay(
-                                Image(systemName: "eyes")
-                                    .font(.system(size: 18, weight: .bold))
-                                    .foregroundStyle(.black.opacity(0.8))
-                            )
+                            .background(.white.opacity(0.12))
+                            .clipShape(Circle())
 
                         Text("Reset for \(Int(coordinator.timeRemainingInBreak.rounded(.up)))")
                             .font(.system(size: 18, weight: .bold, design: .rounded))

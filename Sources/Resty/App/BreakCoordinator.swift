@@ -1,6 +1,8 @@
 import AppKit
 import Combine
 import Foundation
+import RestyShared
+import WidgetKit
 
 @MainActor
 final class BreakCoordinator: ObservableObject {
@@ -13,19 +15,23 @@ final class BreakCoordinator: ObservableObject {
     private let sessionKey = "resty.session"
     private let settingsStore: SettingsStore
     private let detectors: [ActivityDetector]
+    private let controlStateStore: RestyControlStateStore
     private var timerCancellable: AnyCancellable?
     private var smartPauseCooldownUntil: Date?
     private let currentDateProvider: () -> Date
+    private var lastHandledControlCommandID: UUID?
 
     init(
         settingsStore: SettingsStore,
         defaults: UserDefaults = .standard,
         detectors: [ActivityDetector]? = nil,
+        controlStateStore: RestyControlStateStore = RestyControlStateStore(),
         autoStartMonitoring: Bool = true,
         currentDateProvider: @escaping () -> Date = Date.init
     ) {
         self.settingsStore = settingsStore
         self.defaults = defaults
+        self.controlStateStore = controlStateStore
         self.currentDateProvider = currentDateProvider
         self.detectors = detectors ?? [
             MeetingDetector(),
@@ -46,16 +52,19 @@ final class BreakCoordinator: ObservableObject {
         if autoStartMonitoring {
             startMonitoring()
         }
+        publishControlSnapshot()
     }
 
     var settings: AppSettings { settingsStore.settings }
 
-    var statusIconSystemName: String {
+    var statusIcon: RestyIcon {
         switch session.state {
         case .suspendedOutsideSchedule:
-            return "eye.slash.fill"
+            return .eyeClosed
+        case .pausedManual, .pausedSmart:
+            return .eyeOff
         default:
-            return "eye.fill"
+            return .eye
         }
     }
 
@@ -191,6 +200,7 @@ final class BreakCoordinator: ObservableObject {
 
     private func tick(at date: Date) {
         now = date
+        handlePendingControlCommand()
 
         if handleWorkingHours(at: date) {
             persist()
@@ -317,6 +327,61 @@ final class BreakCoordinator: ObservableObject {
     private func persist() {
         guard let data = try? JSONEncoder().encode(session) else { return }
         defaults.set(data, forKey: sessionKey)
+        publishControlSnapshot()
+    }
+
+    private func publishControlSnapshot() {
+        let previousSnapshot = controlStateStore.snapshot()
+        let snapshot = RestyControlSnapshot(
+            isRemindersActive: session.state != .pausedManual,
+            statusText: statusText,
+            updatedAt: now,
+            lastHandledCommandID: lastHandledControlCommandID
+        )
+        controlStateStore.saveSnapshot(snapshot)
+
+        if #available(macOS 26.0, *),
+           previousSnapshot.isRemindersActive != snapshot.isRemindersActive
+            || previousSnapshot.lastHandledCommandID != snapshot.lastHandledCommandID {
+            ControlCenter.shared.reloadControls(ofKind: "local.resty.controls.reminders")
+            ControlCenter.shared.reloadControls(ofKind: "local.resty.controls.startBreak")
+            ControlCenter.shared.reloadControls(ofKind: "local.resty.controls.skipRound")
+        }
+    }
+
+    private func handlePendingControlCommand() {
+        guard let command = controlStateStore.pendingCommand(),
+              command.id != lastHandledControlCommandID else {
+            return
+        }
+
+        switch command.kind {
+        case .pause:
+            if session.state != .pausedManual {
+                session.state = .pausedManual
+                session.pausedAt = now
+            }
+        case .resume:
+            if session.state == .pausedManual {
+                resetCountdown(from: now)
+            }
+        case .startBreak:
+            startBreakNow()
+        case .skipRound:
+            skipBreak()
+        }
+
+        lastHandledControlCommandID = command.id
+        controlStateStore.markCommandHandled(
+            command,
+            snapshot: RestyControlSnapshot(
+                isRemindersActive: session.state != .pausedManual,
+                statusText: statusText,
+                updatedAt: now,
+                lastHandledCommandID: lastHandledControlCommandID
+            )
+        )
+        persist()
     }
 
     private func timeString(for interval: TimeInterval) -> String {

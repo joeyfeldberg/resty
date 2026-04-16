@@ -47,10 +47,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         guard let statusItem, let coordinator else { return }
 
         if let button = statusItem.button {
-            button.image = NSImage(
-                systemSymbolName: coordinator.statusIconSystemName,
-                accessibilityDescription: "Resty status"
-            )
+            button.image = coordinator.statusIcon.nsImage()
             button.imagePosition = .imageLeading
             button.imageScaling = .scaleProportionallyDown
             button.title = coordinator.statusText

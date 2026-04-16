@@ -8,15 +8,29 @@ let package = Package(
     ],
     products: [
         .executable(name: "Resty", targets: ["Resty"]),
+        .executable(name: "RestyControlsExtension", targets: ["RestyControlsExtension"]),
     ],
     targets: [
+        .target(
+            name: "RestyShared",
+            path: "Sources/RestyShared"
+        ),
         .executableTarget(
             name: "Resty",
-            path: "Sources/Resty"
+            dependencies: ["RestyShared"],
+            path: "Sources/Resty",
+            resources: [
+                .process("Resources")
+            ]
+        ),
+        .executableTarget(
+            name: "RestyControlsExtension",
+            dependencies: ["RestyShared"],
+            path: "Sources/RestyControlsExtension"
         ),
         .testTarget(
             name: "RestyTests",
-            dependencies: ["Resty"],
+            dependencies: ["Resty", "RestyShared"],
             path: "Tests/RestyTests"
         ),
     ]

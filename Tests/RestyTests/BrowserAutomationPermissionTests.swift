@@ -11,6 +11,15 @@ final class BrowserAutomationPermissionTests: XCTestCase {
         XCTAssertEqual(target?.bundleIdentifier, "com.google.Chrome")
     }
 
+    func testPrefersFrontmostFirefoxWhenInstalled() {
+        let target = BrowserAutomationPermissionHelper.preferredTarget(
+            frontmostBundleIdentifier: "org.mozilla.firefox",
+            installedBundleIdentifiers: ["com.apple.Safari", "org.mozilla.firefox"]
+        )
+
+        XCTAssertEqual(target?.bundleIdentifier, "org.mozilla.firefox")
+    }
+
     func testFallsBackToFirstInstalledSupportedBrowser() {
         let target = BrowserAutomationPermissionHelper.preferredTarget(
             frontmostBundleIdentifier: "com.apple.dt.Xcode",

@@ -30,19 +30,22 @@ struct BrowserMediaContext {
 }
 
 enum BrowserMediaInspector {
-    private static let supportedApps: [(name: String, scriptName: String)] = [
-        ("Google Chrome", "Google Chrome"),
-        ("Arc", "Arc"),
-        ("Microsoft Edge", "Microsoft Edge"),
-        ("Safari", "Safari")
+    private struct SupportedBrowser {
+        let name: String
+        let bundleIdentifier: String
+        let scriptName: String
+    }
+
+    private static let supportedApps: [SupportedBrowser] = [
+        SupportedBrowser(name: "Google Chrome", bundleIdentifier: "com.google.Chrome", scriptName: "Google Chrome"),
+        SupportedBrowser(name: "Arc", bundleIdentifier: "company.thebrowser.Browser", scriptName: "Arc"),
+        SupportedBrowser(name: "Microsoft Edge", bundleIdentifier: "com.microsoft.edgemac", scriptName: "Microsoft Edge"),
+        SupportedBrowser(name: "Safari", bundleIdentifier: "com.apple.Safari", scriptName: "Safari"),
+        SupportedBrowser(name: "Firefox", bundleIdentifier: "org.mozilla.firefox", scriptName: "Firefox")
     ]
 
     static func frontmostContext() -> BrowserMediaContext? {
-        guard let frontmost = NSWorkspace.shared.frontmostApplication?.localizedName else {
-            return nil
-        }
-
-        guard let app = supportedApps.first(where: { $0.name == frontmost }) else {
+        guard let app = frontmostBrowserApp() else {
             return nil
         }
 
@@ -53,6 +56,13 @@ enum BrowserMediaInspector {
                 if not (exists front document) then return ""
                 set currentTab to current tab of front window
                 return (name of currentTab) & "||" & (URL of currentTab)
+            end tell
+            """
+        } else if app.scriptName == "Firefox" {
+            scriptSource = """
+            tell application "Firefox"
+                if (count of windows) is 0 then return ""
+                return (name of front window) & "||"
             end tell
             """
         } else {
@@ -74,6 +84,21 @@ enum BrowserMediaInspector {
         let title = parts.first ?? ""
         let url = parts.count > 1 ? parts[1] : ""
         return BrowserMediaContext(appName: app.name, title: title, url: url)
+    }
+
+    static func frontmostBrowserName() -> String? {
+        frontmostBrowserApp()?.name
+    }
+
+    private static func frontmostBrowserApp() -> SupportedBrowser? {
+        guard let frontmost = NSWorkspace.shared.frontmostApplication else {
+            return nil
+        }
+
+        return supportedApps.first { browser in
+            browser.bundleIdentifier == frontmost.bundleIdentifier
+                || browser.name == frontmost.localizedName
+        }
     }
 }
 
@@ -107,7 +132,8 @@ enum BrowserAutomationPermissionHelper {
         BrowserAutomationTarget(name: "Safari", bundleIdentifier: "com.apple.Safari", scriptName: "Safari"),
         BrowserAutomationTarget(name: "Google Chrome", bundleIdentifier: "com.google.Chrome", scriptName: "Google Chrome"),
         BrowserAutomationTarget(name: "Arc", bundleIdentifier: "company.thebrowser.Browser", scriptName: "Arc"),
-        BrowserAutomationTarget(name: "Microsoft Edge", bundleIdentifier: "com.microsoft.edgemac", scriptName: "Microsoft Edge")
+        BrowserAutomationTarget(name: "Microsoft Edge", bundleIdentifier: "com.microsoft.edgemac", scriptName: "Microsoft Edge"),
+        BrowserAutomationTarget(name: "Firefox", bundleIdentifier: "org.mozilla.firefox", scriptName: "Firefox")
     ]
 
     static func preferredTarget(frontmostBundleIdentifier: String?, installedBundleIdentifiers: Set<String>) -> BrowserAutomationTarget? {
@@ -149,6 +175,7 @@ struct MeetingDetector: ActivityDetector {
 
     func status(using settings: AppSettings) -> DetectorStatus {
         guard isEnabled, settings.smartPauseMeetings else { return .inactive }
+        let mediaDevicesInUse = mediaDevicesInUse()
 
         if let app = NSWorkspace.shared.frontmostApplication,
            let bundleIdentifier = app.bundleIdentifier,
@@ -156,17 +183,25 @@ struct MeetingDetector: ActivityDetector {
             return Self.foregroundAppStatus(
                 bundleIdentifier: bundleIdentifier,
                 appName: app.localizedName ?? "Meeting app",
-                mediaDevicesInUse: mediaDevicesInUse()
+                mediaDevicesInUse: mediaDevicesInUse
             )
         }
 
         if let browserContext = BrowserMediaInspector.frontmostContext(),
-           browserContext.matches(any: DetectionPatterns.meeting) {
-            if mediaDevicesInUse() {
-                return DetectorStatus(isActive: true, reason: "Browser meeting with camera or mic active")
-            }
+           let status = Self.browserStatus(
+            context: browserContext,
+            frontmostBrowserName: browserContext.appName,
+            mediaDevicesInUse: mediaDevicesInUse
+           ) {
+            return status
+        }
 
-            return DetectorStatus(isActive: true, reason: "Meeting tab open in \(browserContext.appName)")
+        if let status = Self.browserStatus(
+            context: nil,
+            frontmostBrowserName: BrowserMediaInspector.frontmostBrowserName(),
+            mediaDevicesInUse: mediaDevicesInUse
+        ) {
+            return status
         }
 
         return .inactive
@@ -206,6 +241,26 @@ struct MeetingDetector: ActivityDetector {
         }
 
         return DetectorStatus(isActive: true, reason: "\(appName) in foreground")
+    }
+
+    static func browserStatus(
+        context: BrowserMediaContext?,
+        frontmostBrowserName: String?,
+        mediaDevicesInUse: Bool
+    ) -> DetectorStatus? {
+        if let context, context.matches(any: DetectionPatterns.meeting) {
+            if mediaDevicesInUse {
+                return DetectorStatus(isActive: true, reason: "Browser meeting with camera or mic active")
+            }
+
+            return DetectorStatus(isActive: true, reason: "Meeting tab open in \(context.appName)")
+        }
+
+        guard mediaDevicesInUse, let frontmostBrowserName else {
+            return nil
+        }
+
+        return DetectorStatus(isActive: true, reason: "\(frontmostBrowserName) using camera or mic")
     }
 }
 

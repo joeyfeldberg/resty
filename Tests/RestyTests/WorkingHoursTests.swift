@@ -28,7 +28,7 @@ final class WorkingHoursTests: XCTestCase {
 
         XCTAssertEqual(coordinator.session.state, .suspendedOutsideSchedule)
         XCTAssertEqual(coordinator.statusText, "Off")
-        XCTAssertEqual(coordinator.statusIconSystemName, "eye.slash.fill")
+        XCTAssertEqual(coordinator.statusIcon, .eyeClosed)
     }
 
     func testSchedulerResetsCountdownWhenWorkingHoursBegin() {

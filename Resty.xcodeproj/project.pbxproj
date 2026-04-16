@@ -1,0 +1,222 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		7A0000010000000000000001 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A0000020000000000000001 /* AppDelegate.swift */; };
+		7A0000010000000000000002 /* BreakCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A0000020000000000000002 /* BreakCoordinator.swift */; };
+		7A0000010000000000000003 /* PermissionsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A0000020000000000000003 /* PermissionsManager.swift */; };
+		7A0000010000000000000004 /* RestyApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A0000020000000000000004 /* RestyApp.swift */; };
+		7A0000010000000000000005 /* SettingsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A0000020000000000000005 /* SettingsStore.swift */; };
+		7A0000010000000000000006 /* ActivityDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A0000020000000000000006 /* ActivityDetector.swift */; };
+		7A0000010000000000000007 /* DetectionPatterns.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A0000020000000000000007 /* DetectionPatterns.swift */; };
+		7A0000010000000000000008 /* AppSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A0000020000000000000008 /* AppSettings.swift */; };
+		7A0000010000000000000009 /* BreakSessionState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A0000020000000000000009 /* BreakSessionState.swift */; };
+		7A000001000000000000000A /* BreakBackdropView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A000002000000000000000A /* BreakBackdropView.swift */; };
+		7A000001000000000000000B /* BreakOverlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A000002000000000000000B /* BreakOverlayView.swift */; };
+		7A000001000000000000000C /* FloatingCountdownView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A000002000000000000000C /* FloatingCountdownView.swift */; };
+		7A000001000000000000000D /* ReminderPanelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A000002000000000000000D /* ReminderPanelView.swift */; };
+		7A000001000000000000000E /* RestyIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A000002000000000000000E /* RestyIcon.swift */; };
+		7A000001000000000000000F /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A000002000000000000000F /* SettingsView.swift */; };
+		7A0000010000000000000010 /* VisualStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A0000020000000000000010 /* VisualStyle.swift */; };
+		7A0000010000000000000011 /* WindowControllers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A0000020000000000000011 /* WindowControllers.swift */; };
+		7A0000010000000000000012 /* eye.svg in Resources */ = {isa = PBXBuildFile; fileRef = 7A0000020000000000000012 /* eye.svg */; };
+		7A0000010000000000000013 /* eye-closed.svg in Resources */ = {isa = PBXBuildFile; fileRef = 7A0000020000000000000013 /* eye-closed.svg */; };
+		7A0000010000000000000014 /* eye-off.svg in Resources */ = {isa = PBXBuildFile; fileRef = 7A0000020000000000000014 /* eye-off.svg */; };
+		7A0000010000000000000015 /* LICENSE.txt in Resources */ = {isa = PBXBuildFile; fileRef = 7A0000020000000000000015 /* LICENSE.txt */; };
+		7A0000010000000000000016 /* RestyControlStateStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A0000020000000000000016 /* RestyControlStateStore.swift */; };
+		7A0000010000000000000017 /* RestyControlsExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A0000020000000000000017 /* RestyControlsExtension.swift */; };
+		7A0000010000000000000018 /* libRestyShared.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A0000040000000000000003 /* libRestyShared.a */; };
+		7A0000010000000000000019 /* libRestyShared.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A0000040000000000000003 /* libRestyShared.a */; };
+		7A000001000000000000001A /* RestyControlsExtension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 7A0000040000000000000002 /* RestyControlsExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		7A000001000000000000001B /* default-break-background.png in Resources */ = {isa = PBXBuildFile; fileRef = 7A000002000000000000001A /* default-break-background.png */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		7A0000030000000000000001 /* PBXContainerItemProxy */ = {isa = PBXContainerItemProxy; containerPortal = 7A0000050000000000000001 /* Project object */; proxyType = 1; remoteGlobalIDString = 7A0000060000000000000003; remoteInfo = RestyShared; };
+		7A0000030000000000000002 /* PBXContainerItemProxy */ = {isa = PBXContainerItemProxy; containerPortal = 7A0000050000000000000001 /* Project object */; proxyType = 1; remoteGlobalIDString = 7A0000060000000000000002; remoteInfo = RestyControlsExtension; };
+		7A0000030000000000000003 /* PBXContainerItemProxy */ = {isa = PBXContainerItemProxy; containerPortal = 7A0000050000000000000001 /* Project object */; proxyType = 1; remoteGlobalIDString = 7A0000060000000000000003; remoteInfo = RestyShared; };
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		7A0000070000000000000001 /* Embed App Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				7A000001000000000000001A /* RestyControlsExtension.appex in Embed App Extensions */,
+			);
+			name = "Embed App Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		7A0000020000000000000001 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		7A0000020000000000000002 /* BreakCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreakCoordinator.swift; sourceTree = "<group>"; };
+		7A0000020000000000000003 /* PermissionsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionsManager.swift; sourceTree = "<group>"; };
+		7A0000020000000000000004 /* RestyApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestyApp.swift; sourceTree = "<group>"; };
+		7A0000020000000000000005 /* SettingsStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsStore.swift; sourceTree = "<group>"; };
+		7A0000020000000000000006 /* ActivityDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityDetector.swift; sourceTree = "<group>"; };
+		7A0000020000000000000007 /* DetectionPatterns.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetectionPatterns.swift; sourceTree = "<group>"; };
+		7A0000020000000000000008 /* AppSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettings.swift; sourceTree = "<group>"; };
+		7A0000020000000000000009 /* BreakSessionState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreakSessionState.swift; sourceTree = "<group>"; };
+		7A000002000000000000000A /* BreakBackdropView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreakBackdropView.swift; sourceTree = "<group>"; };
+		7A000002000000000000000B /* BreakOverlayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreakOverlayView.swift; sourceTree = "<group>"; };
+		7A000002000000000000000C /* FloatingCountdownView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloatingCountdownView.swift; sourceTree = "<group>"; };
+		7A000002000000000000000D /* ReminderPanelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderPanelView.swift; sourceTree = "<group>"; };
+		7A000002000000000000000E /* RestyIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestyIcon.swift; sourceTree = "<group>"; };
+		7A000002000000000000000F /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		7A0000020000000000000010 /* VisualStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisualStyle.swift; sourceTree = "<group>"; };
+		7A0000020000000000000011 /* WindowControllers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowControllers.swift; sourceTree = "<group>"; };
+		7A0000020000000000000012 /* eye.svg */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "eye.svg"; sourceTree = "<group>"; };
+		7A0000020000000000000013 /* eye-closed.svg */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "eye-closed.svg"; sourceTree = "<group>"; };
+		7A0000020000000000000014 /* eye-off.svg */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "eye-off.svg"; sourceTree = "<group>"; };
+		7A0000020000000000000015 /* LICENSE.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE.txt; sourceTree = "<group>"; };
+		7A0000020000000000000016 /* RestyControlStateStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestyControlStateStore.swift; sourceTree = "<group>"; };
+		7A0000020000000000000017 /* RestyControlsExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestyControlsExtension.swift; sourceTree = "<group>"; };
+		7A0000020000000000000018 /* Resty-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Resty-Info.plist"; sourceTree = "<group>"; };
+		7A0000020000000000000019 /* RestyControlsExtension-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "RestyControlsExtension-Info.plist"; sourceTree = "<group>"; };
+		7A000002000000000000001A /* default-break-background.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "default-break-background.png"; sourceTree = "<group>"; };
+		7A0000040000000000000001 /* Resty.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Resty.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		7A0000040000000000000002 /* RestyControlsExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = RestyControlsExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		7A0000040000000000000003 /* libRestyShared.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libRestyShared.a; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		7A0000080000000000000001 /* Frameworks */ = {isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (7A0000010000000000000018 /* libRestyShared.a in Frameworks */, ); runOnlyForDeploymentPostprocessing = 0; };
+		7A0000080000000000000002 /* Frameworks */ = {isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (7A0000010000000000000019 /* libRestyShared.a in Frameworks */, ); runOnlyForDeploymentPostprocessing = 0; };
+		7A0000080000000000000003 /* Frameworks */ = {isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		7A0000090000000000000001 = {
+			isa = PBXGroup;
+			children = (
+				7A0000090000000000000002 /* Config */,
+				7A0000090000000000000003 /* Sources */,
+				7A0000090000000000000004 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		7A0000090000000000000002 /* Config */ = {isa = PBXGroup; children = (7A0000020000000000000018 /* Resty-Info.plist */, 7A0000020000000000000019 /* RestyControlsExtension-Info.plist */, ); path = Config; sourceTree = "<group>"; };
+		7A0000090000000000000003 /* Sources */ = {isa = PBXGroup; children = (7A0000090000000000000005 /* Resty */, 7A000009000000000000000E /* RestyShared */, 7A000009000000000000000F /* RestyControlsExtension */, ); path = Sources; sourceTree = "<group>"; };
+		7A0000090000000000000004 /* Products */ = {isa = PBXGroup; children = (7A0000040000000000000001 /* Resty.app */, 7A0000040000000000000002 /* RestyControlsExtension.appex */, 7A0000040000000000000003 /* libRestyShared.a */, ); name = Products; sourceTree = "<group>"; };
+		7A0000090000000000000005 /* Resty */ = {isa = PBXGroup; children = (7A0000090000000000000006 /* App */, 7A0000090000000000000007 /* Detectors */, 7A0000090000000000000008 /* Models */, 7A0000090000000000000009 /* Resources */, 7A000009000000000000000B /* Views */, 7A000009000000000000000C /* Windows */, ); path = Resty; sourceTree = "<group>"; };
+		7A0000090000000000000006 /* App */ = {isa = PBXGroup; children = (7A0000020000000000000001, 7A0000020000000000000002, 7A0000020000000000000003, 7A0000020000000000000004, 7A0000020000000000000005, ); path = App; sourceTree = "<group>"; };
+		7A0000090000000000000007 /* Detectors */ = {isa = PBXGroup; children = (7A0000020000000000000006, 7A0000020000000000000007, ); path = Detectors; sourceTree = "<group>"; };
+		7A0000090000000000000008 /* Models */ = {isa = PBXGroup; children = (7A0000020000000000000008, 7A0000020000000000000009, ); path = Models; sourceTree = "<group>"; };
+		7A0000090000000000000009 /* Resources */ = {isa = PBXGroup; children = (7A0000090000000000000010 /* Backgrounds */, 7A000009000000000000000A /* Lucide */, ); path = Resources; sourceTree = "<group>"; };
+		7A000009000000000000000A /* Lucide */ = {isa = PBXGroup; children = (7A0000020000000000000013, 7A0000020000000000000014, 7A0000020000000000000012, 7A0000020000000000000015, ); path = Lucide; sourceTree = "<group>"; };
+		7A000009000000000000000B /* Views */ = {isa = PBXGroup; children = (7A000002000000000000000A, 7A000002000000000000000B, 7A000002000000000000000C, 7A000002000000000000000D, 7A000002000000000000000E, 7A000002000000000000000F, 7A0000020000000000000010, ); path = Views; sourceTree = "<group>"; };
+		7A000009000000000000000C /* Windows */ = {isa = PBXGroup; children = (7A0000020000000000000011, ); path = Windows; sourceTree = "<group>"; };
+		7A000009000000000000000E /* RestyShared */ = {isa = PBXGroup; children = (7A0000020000000000000016, ); path = RestyShared; sourceTree = "<group>"; };
+		7A000009000000000000000F /* RestyControlsExtension */ = {isa = PBXGroup; children = (7A0000020000000000000017, ); path = RestyControlsExtension; sourceTree = "<group>"; };
+		7A0000090000000000000010 /* Backgrounds */ = {isa = PBXGroup; children = (7A000002000000000000001A, ); path = Backgrounds; sourceTree = "<group>"; };
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		7A0000060000000000000001 /* Resty */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 7A00000D0000000000000001 /* Build configuration list for PBXNativeTarget "Resty" */;
+			buildPhases = (7A00000A0000000000000001 /* Sources */, 7A0000080000000000000001 /* Frameworks */, 7A00000B0000000000000001 /* Resources */, 7A0000070000000000000001 /* Embed App Extensions */, );
+			buildRules = ();
+			dependencies = (7A00000C0000000000000001 /* PBXTargetDependency */, 7A00000C0000000000000002 /* PBXTargetDependency */, );
+			name = Resty;
+			productName = Resty;
+			productReference = 7A0000040000000000000001 /* Resty.app */;
+			productType = "com.apple.product-type.application";
+		};
+		7A0000060000000000000002 /* RestyControlsExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 7A00000D0000000000000002 /* Build configuration list for PBXNativeTarget "RestyControlsExtension" */;
+			buildPhases = (7A00000A0000000000000002 /* Sources */, 7A0000080000000000000002 /* Frameworks */, 7A00000B0000000000000002 /* Resources */, );
+			buildRules = ();
+			dependencies = (7A00000C0000000000000003 /* PBXTargetDependency */, );
+			name = RestyControlsExtension;
+			productName = RestyControlsExtension;
+			productReference = 7A0000040000000000000002 /* RestyControlsExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+		7A0000060000000000000003 /* RestyShared */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 7A00000D0000000000000003 /* Build configuration list for PBXNativeTarget "RestyShared" */;
+			buildPhases = (7A00000A0000000000000003 /* Sources */, 7A0000080000000000000003 /* Frameworks */, );
+			buildRules = ();
+			dependencies = ();
+			name = RestyShared;
+			productName = RestyShared;
+			productReference = 7A0000040000000000000003 /* libRestyShared.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		7A0000050000000000000001 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 2630;
+				LastUpgradeCheck = 2630;
+				TargetAttributes = {
+					7A0000060000000000000001 = {CreatedOnToolsVersion = 26.3;};
+					7A0000060000000000000002 = {CreatedOnToolsVersion = 26.3;};
+					7A0000060000000000000003 = {CreatedOnToolsVersion = 26.3;};
+				};
+			};
+			buildConfigurationList = 7A00000D0000000000000004 /* Build configuration list for PBXProject "Resty" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (en, Base, );
+			mainGroup = 7A0000090000000000000001;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 7A0000090000000000000004 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (7A0000060000000000000001 /* Resty */, 7A0000060000000000000002 /* RestyControlsExtension */, 7A0000060000000000000003 /* RestyShared */, );
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		7A00000B0000000000000001 /* Resources */ = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (7A0000010000000000000012, 7A0000010000000000000013, 7A0000010000000000000014, 7A0000010000000000000015, 7A000001000000000000001B, ); runOnlyForDeploymentPostprocessing = 0; };
+		7A00000B0000000000000002 /* Resources */ = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		7A00000A0000000000000001 /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (7A0000010000000000000001, 7A0000010000000000000002, 7A0000010000000000000003, 7A0000010000000000000004, 7A0000010000000000000005, 7A0000010000000000000006, 7A0000010000000000000007, 7A0000010000000000000008, 7A0000010000000000000009, 7A000001000000000000000A, 7A000001000000000000000B, 7A000001000000000000000C, 7A000001000000000000000D, 7A000001000000000000000E, 7A000001000000000000000F, 7A0000010000000000000010, 7A0000010000000000000011, ); runOnlyForDeploymentPostprocessing = 0; };
+		7A00000A0000000000000002 /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (7A0000010000000000000017, ); runOnlyForDeploymentPostprocessing = 0; };
+		7A00000A0000000000000003 /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (7A0000010000000000000016, ); runOnlyForDeploymentPostprocessing = 0; };
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		7A00000C0000000000000001 /* PBXTargetDependency */ = {isa = PBXTargetDependency; target = 7A0000060000000000000003 /* RestyShared */; targetProxy = 7A0000030000000000000001 /* PBXContainerItemProxy */; };
+		7A00000C0000000000000002 /* PBXTargetDependency */ = {isa = PBXTargetDependency; target = 7A0000060000000000000002 /* RestyControlsExtension */; targetProxy = 7A0000030000000000000002 /* PBXContainerItemProxy */; };
+		7A00000C0000000000000003 /* PBXTargetDependency */ = {isa = PBXTargetDependency; target = 7A0000060000000000000003 /* RestyShared */; targetProxy = 7A0000030000000000000003 /* PBXContainerItemProxy */; };
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		7A00000E0000000000000001 /* Debug */ = {isa = XCBuildConfiguration; buildSettings = {CODE_SIGN_IDENTITY = "-"; CODE_SIGN_STYLE = Manual; DEBUG_INFORMATION_FORMAT = dwarf; ENABLE_USER_SCRIPT_SANDBOXING = YES; GCC_OPTIMIZATION_LEVEL = 0; MACOSX_DEPLOYMENT_TARGET = 13.0; SDKROOT = macosx; SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG; SWIFT_VERSION = 6.0; }; name = Debug; };
+		7A00000E0000000000000002 /* Release */ = {isa = XCBuildConfiguration; buildSettings = {CODE_SIGN_IDENTITY = "-"; CODE_SIGN_STYLE = Manual; DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym"; MACOSX_DEPLOYMENT_TARGET = 13.0; SDKROOT = macosx; SWIFT_COMPILATION_MODE = wholemodule; SWIFT_OPTIMIZATION_LEVEL = "-O"; SWIFT_VERSION = 6.0; }; name = Release; };
+		7A00000E0000000000000003 /* Debug */ = {isa = XCBuildConfiguration; buildSettings = {CODE_SIGN_IDENTITY = "-"; CODE_SIGN_STYLE = Manual; INFOPLIST_FILE = "Config/Resty-Info.plist"; LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks"; MACOSX_DEPLOYMENT_TARGET = 13.0; PRODUCT_BUNDLE_IDENTIFIER = local.resty.app; PRODUCT_NAME = Resty; SDKROOT = macosx; SWIFT_VERSION = 6.0; }; name = Debug; };
+		7A00000E0000000000000004 /* Release */ = {isa = XCBuildConfiguration; buildSettings = {CODE_SIGN_IDENTITY = "-"; CODE_SIGN_STYLE = Manual; INFOPLIST_FILE = "Config/Resty-Info.plist"; LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks"; MACOSX_DEPLOYMENT_TARGET = 13.0; PRODUCT_BUNDLE_IDENTIFIER = local.resty.app; PRODUCT_NAME = Resty; SDKROOT = macosx; SWIFT_VERSION = 6.0; }; name = Release; };
+		7A00000E0000000000000005 /* Debug */ = {isa = XCBuildConfiguration; buildSettings = {APPLICATION_EXTENSION_API_ONLY = YES; CODE_SIGN_IDENTITY = "-"; CODE_SIGN_STYLE = Manual; INFOPLIST_FILE = "Config/RestyControlsExtension-Info.plist"; MACOSX_DEPLOYMENT_TARGET = 26.0; PRODUCT_BUNDLE_IDENTIFIER = local.resty.app.controls; PRODUCT_NAME = RestyControlsExtension; SDKROOT = macosx; SKIP_INSTALL = YES; SWIFT_VERSION = 6.0; }; name = Debug; };
+		7A00000E0000000000000006 /* Release */ = {isa = XCBuildConfiguration; buildSettings = {APPLICATION_EXTENSION_API_ONLY = YES; CODE_SIGN_IDENTITY = "-"; CODE_SIGN_STYLE = Manual; INFOPLIST_FILE = "Config/RestyControlsExtension-Info.plist"; MACOSX_DEPLOYMENT_TARGET = 26.0; PRODUCT_BUNDLE_IDENTIFIER = local.resty.app.controls; PRODUCT_NAME = RestyControlsExtension; SDKROOT = macosx; SKIP_INSTALL = YES; SWIFT_VERSION = 6.0; }; name = Release; };
+		7A00000E0000000000000007 /* Debug */ = {isa = XCBuildConfiguration; buildSettings = {CODE_SIGNING_ALLOWED = NO; MACH_O_TYPE = staticlib; MACOSX_DEPLOYMENT_TARGET = 13.0; PRODUCT_NAME = RestyShared; SDKROOT = macosx; SKIP_INSTALL = YES; SWIFT_VERSION = 6.0; }; name = Debug; };
+		7A00000E0000000000000008 /* Release */ = {isa = XCBuildConfiguration; buildSettings = {CODE_SIGNING_ALLOWED = NO; MACH_O_TYPE = staticlib; MACOSX_DEPLOYMENT_TARGET = 13.0; PRODUCT_NAME = RestyShared; SDKROOT = macosx; SKIP_INSTALL = YES; SWIFT_VERSION = 6.0; }; name = Release; };
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		7A00000D0000000000000001 /* Build configuration list for PBXNativeTarget "Resty" */ = {isa = XCConfigurationList; buildConfigurations = (7A00000E0000000000000003, 7A00000E0000000000000004, ); defaultConfigurationIsVisible = 0; defaultConfigurationName = Debug; };
+		7A00000D0000000000000002 /* Build configuration list for PBXNativeTarget "RestyControlsExtension" */ = {isa = XCConfigurationList; buildConfigurations = (7A00000E0000000000000005, 7A00000E0000000000000006, ); defaultConfigurationIsVisible = 0; defaultConfigurationName = Debug; };
+		7A00000D0000000000000003 /* Build configuration list for PBXNativeTarget "RestyShared" */ = {isa = XCConfigurationList; buildConfigurations = (7A00000E0000000000000007, 7A00000E0000000000000008, ); defaultConfigurationIsVisible = 0; defaultConfigurationName = Debug; };
+		7A00000D0000000000000004 /* Build configuration list for PBXProject "Resty" */ = {isa = XCConfigurationList; buildConfigurations = (7A00000E0000000000000001, 7A00000E0000000000000002, ); defaultConfigurationIsVisible = 0; defaultConfigurationName = Debug; };
+/* End XCConfigurationList section */
+	};
+	rootObject = 7A0000050000000000000001 /* Project object */;
+}

@@ -1,5 +1,6 @@
 import XCTest
 @testable import Resty
+@testable import RestyShared
 
 @MainActor
 final class BreakCoordinatorTests: XCTestCase {
@@ -131,5 +132,39 @@ final class BreakCoordinatorTests: XCTestCase {
         XCTAssertEqual(coordinator.displayedBreakSeconds, 9)
         XCTAssertEqual(coordinator.preBreakCountdownText, "9")
         XCTAssertEqual(coordinator.headlineText, "Pause coming - 9")
+    }
+
+    func testControlCenterCommandsPauseAndResumeCoordinator() {
+        let defaults = UserDefaults(suiteName: #function)!
+        defaults.removePersistentDomain(forName: #function)
+        let controlSuiteName = "\(#function).controls"
+        let controlDefaults = UserDefaults(suiteName: controlSuiteName)!
+        controlDefaults.removePersistentDomain(forName: controlSuiteName)
+        let controlStore = RestyControlStateStore(defaults: controlDefaults)
+
+        let now = Date(timeIntervalSinceReferenceDate: 1_000)
+        let settingsStore = SettingsStore(defaults: defaults)
+        let coordinator = BreakCoordinator(
+            settingsStore: settingsStore,
+            defaults: defaults,
+            detectors: [],
+            controlStateStore: controlStore,
+            autoStartMonitoring: false,
+            currentDateProvider: { now }
+        )
+
+        controlStore.writeCommand(RestyControlCommand(kind: .pause))
+        coordinator.tickForTesting(at: now.addingTimeInterval(1))
+
+        XCTAssertEqual(coordinator.session.state, .pausedManual)
+        XCTAssertNil(controlStore.pendingCommand())
+        XCTAssertFalse(controlStore.snapshot().isRemindersActive)
+
+        controlStore.writeCommand(RestyControlCommand(kind: .resume))
+        coordinator.tickForTesting(at: now.addingTimeInterval(2))
+
+        XCTAssertEqual(coordinator.session.state, .countingDown)
+        XCTAssertNil(controlStore.pendingCommand())
+        XCTAssertTrue(controlStore.snapshot().isRemindersActive)
     }
 }

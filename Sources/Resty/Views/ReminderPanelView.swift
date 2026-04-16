@@ -9,11 +9,10 @@ struct ReminderPanelView: View {
             HStack(alignment: .top, spacing: 18) {
                 ZStack {
                     Circle()
-                        .fill(.white.opacity(0.16))
+                        .fill(.white.opacity(0.12))
                         .frame(width: 58, height: 58)
 
-                    Image(systemName: "eye.circle.fill")
-                        .font(.system(size: 30, weight: .medium))
+                    RestyIconImage(icon: .eyeClosed, size: 34)
                         .foregroundStyle(.white.opacity(0.92))
                 }
 

@@ -3,6 +3,7 @@ import Foundation
 enum DetectionPatterns {
     static let meeting: Set<String> = [
         "meet.google.com",
+        "google meet",
         "zoom.us",
         "teams.microsoft.com",
         "webex.com",
