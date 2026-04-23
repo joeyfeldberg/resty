@@ -1,6 +1,8 @@
 import AVFoundation
 import AppKit
+import CoreAudio
 import CoreGraphics
+import CoreMediaIO
 import Foundation
 
 protocol ActivityDetector {
@@ -153,61 +155,23 @@ struct BrowserAutomationTarget: Equatable {
     let scriptName: String
 }
 
-struct MeetingDetector: ActivityDetector {
-    private let meetingBundleIdentifiers: Set<String> = [
-        "us.zoom.xos",
-        "com.microsoft.teams2",
-        "com.microsoft.teams",
-        "com.hnc.Discord",
-        "com.cisco.webexmeetingsapp",
-        "com.tinyspeck.slackmacgap",
-        "com.apple.FaceTime"
-    ]
+struct RunningApplicationContext {
+    let bundleIdentifier: String
+    let localizedName: String
+}
 
-    static let mediaRequiredBundleIdentifiers: Set<String> = [
-        "com.microsoft.teams2",
-        "com.microsoft.teams",
-        "com.hnc.Discord",
-        "com.tinyspeck.slackmacgap"
-    ]
+protocol MediaUsageDetecting {
+    func cameraOrMicrophoneInUse() -> Bool
+}
 
-    var isEnabled: Bool = true
-
-    func status(using settings: AppSettings) -> DetectorStatus {
-        guard isEnabled, settings.smartPauseMeetings else { return .inactive }
-        let mediaDevicesInUse = mediaDevicesInUse()
-
-        if let app = NSWorkspace.shared.frontmostApplication,
-           let bundleIdentifier = app.bundleIdentifier,
-           meetingBundleIdentifiers.contains(bundleIdentifier) {
-            return Self.foregroundAppStatus(
-                bundleIdentifier: bundleIdentifier,
-                appName: app.localizedName ?? "Meeting app",
-                mediaDevicesInUse: mediaDevicesInUse
-            )
-        }
-
-        if let browserContext = BrowserMediaInspector.frontmostContext(),
-           let status = Self.browserStatus(
-            context: browserContext,
-            frontmostBrowserName: browserContext.appName,
-            mediaDevicesInUse: mediaDevicesInUse
-           ) {
-            return status
-        }
-
-        if let status = Self.browserStatus(
-            context: nil,
-            frontmostBrowserName: BrowserMediaInspector.frontmostBrowserName(),
-            mediaDevicesInUse: mediaDevicesInUse
-        ) {
-            return status
-        }
-
-        return .inactive
+struct SystemMediaUsageDetector: MediaUsageDetecting {
+    func cameraOrMicrophoneInUse() -> Bool {
+        Self.avCaptureDeviceInUse()
+            || Self.coreAudioInputDeviceRunning()
+            || Self.coreMediaIODeviceRunning()
     }
 
-    private func mediaDevicesInUse() -> Bool {
+    private static func avCaptureDeviceInUse() -> Bool {
         if #available(macOS 14.0, *) {
             let discoverySession = AVCaptureDevice.DiscoverySession(
                 deviceTypes: [.builtInWideAngleCamera, .external, .microphone],
@@ -228,6 +192,219 @@ struct MeetingDetector: ActivityDetector {
             position: .unspecified
         ).devices
         return (videoDevices + audioDevices).contains { $0.isInUseByAnotherApplication }
+    }
+
+    private static func coreAudioInputDeviceRunning() -> Bool {
+        audioDeviceIDs().contains { deviceID in
+            audioDeviceHasInputStreams(deviceID) && audioDeviceIsRunningSomewhere(deviceID)
+        }
+    }
+
+    private static func audioDeviceIDs() -> [AudioDeviceID] {
+        var address = AudioObjectPropertyAddress(
+            mSelector: kAudioHardwarePropertyDevices,
+            mScope: kAudioObjectPropertyScopeGlobal,
+            mElement: kAudioObjectPropertyElementMain
+        )
+        var dataSize: UInt32 = 0
+
+        guard AudioObjectGetPropertyDataSize(AudioObjectID(kAudioObjectSystemObject), &address, 0, nil, &dataSize) == noErr else {
+            return []
+        }
+
+        let count = Int(dataSize) / MemoryLayout<AudioDeviceID>.size
+        guard count > 0 else { return [] }
+
+        var devices = [AudioDeviceID](repeating: kAudioObjectUnknown, count: count)
+        let status = devices.withUnsafeMutableBufferPointer { buffer in
+            AudioObjectGetPropertyData(
+                AudioObjectID(kAudioObjectSystemObject),
+                &address,
+                0,
+                nil,
+                &dataSize,
+                buffer.baseAddress!
+            )
+        }
+
+        return status == noErr ? devices : []
+    }
+
+    private static func audioDeviceHasInputStreams(_ deviceID: AudioDeviceID) -> Bool {
+        var address = AudioObjectPropertyAddress(
+            mSelector: kAudioDevicePropertyStreams,
+            mScope: kAudioDevicePropertyScopeInput,
+            mElement: kAudioObjectPropertyElementMain
+        )
+        var dataSize: UInt32 = 0
+
+        guard AudioObjectHasProperty(deviceID, &address),
+              AudioObjectGetPropertyDataSize(deviceID, &address, 0, nil, &dataSize) == noErr else {
+            return false
+        }
+
+        return dataSize >= MemoryLayout<AudioStreamID>.size
+    }
+
+    private static func audioDeviceIsRunningSomewhere(_ deviceID: AudioDeviceID) -> Bool {
+        var address = AudioObjectPropertyAddress(
+            mSelector: kAudioDevicePropertyDeviceIsRunningSomewhere,
+            mScope: kAudioObjectPropertyScopeGlobal,
+            mElement: kAudioObjectPropertyElementMain
+        )
+        var isRunning: UInt32 = 0
+        var dataSize = UInt32(MemoryLayout<UInt32>.size)
+
+        guard AudioObjectHasProperty(deviceID, &address),
+              AudioObjectGetPropertyData(deviceID, &address, 0, nil, &dataSize, &isRunning) == noErr else {
+            return false
+        }
+
+        return isRunning != 0
+    }
+
+    private static func coreMediaIODeviceRunning() -> Bool {
+        coreMediaIODeviceIDs().contains { deviceID in
+            coreMediaIODeviceIsRunningSomewhere(deviceID)
+        }
+    }
+
+    private static func coreMediaIODeviceIDs() -> [CMIODeviceID] {
+        var address = CMIOObjectPropertyAddress(
+            mSelector: CMIOObjectPropertySelector(kCMIOHardwarePropertyDevices),
+            mScope: CMIOObjectPropertyScope(kCMIOObjectPropertyScopeGlobal),
+            mElement: CMIOObjectPropertyElement(kCMIOObjectPropertyElementMain)
+        )
+        var dataSize: UInt32 = 0
+
+        guard CMIOObjectGetPropertyDataSize(CMIOObjectID(kCMIOObjectSystemObject), &address, 0, nil, &dataSize) == noErr else {
+            return []
+        }
+
+        let count = Int(dataSize) / MemoryLayout<CMIODeviceID>.size
+        guard count > 0 else { return [] }
+
+        var devices = [CMIODeviceID](repeating: CMIODeviceID(kCMIOObjectUnknown), count: count)
+        let status = devices.withUnsafeMutableBufferPointer { buffer in
+            var dataUsed: UInt32 = 0
+            return CMIOObjectGetPropertyData(
+                CMIOObjectID(kCMIOObjectSystemObject),
+                &address,
+                0,
+                nil,
+                dataSize,
+                &dataUsed,
+                buffer.baseAddress!
+            )
+        }
+
+        return status == noErr ? devices : []
+    }
+
+    private static func coreMediaIODeviceIsRunningSomewhere(_ deviceID: CMIODeviceID) -> Bool {
+        var address = CMIOObjectPropertyAddress(
+            mSelector: CMIOObjectPropertySelector(kCMIODevicePropertyDeviceIsRunningSomewhere),
+            mScope: CMIOObjectPropertyScope(kCMIOObjectPropertyScopeGlobal),
+            mElement: CMIOObjectPropertyElement(kCMIOObjectPropertyElementMain)
+        )
+        var isRunning: UInt32 = 0
+        let dataSize = UInt32(MemoryLayout<UInt32>.size)
+        var dataUsed: UInt32 = 0
+
+        guard CMIOObjectHasProperty(CMIOObjectID(deviceID), &address),
+              CMIOObjectGetPropertyData(
+                CMIOObjectID(deviceID),
+                &address,
+                0,
+                nil,
+                dataSize,
+                &dataUsed,
+                &isRunning
+              ) == noErr else {
+            return false
+        }
+
+        return isRunning != 0
+    }
+}
+
+struct MeetingDetector: ActivityDetector {
+    private let mediaUsageDetector: MediaUsageDetecting
+    private let frontmostApplicationProvider: () -> RunningApplicationContext?
+    private let browserContextProvider: () -> BrowserMediaContext?
+    private let frontmostBrowserNameProvider: () -> String?
+    private let meetingBundleIdentifiers: Set<String> = [
+        "us.zoom.xos",
+        "com.microsoft.teams2",
+        "com.microsoft.teams",
+        "com.hnc.Discord",
+        "com.cisco.webexmeetingsapp",
+        "com.tinyspeck.slackmacgap",
+        "com.apple.FaceTime"
+    ]
+
+    static let mediaRequiredBundleIdentifiers: Set<String> = [
+        "com.microsoft.teams2",
+        "com.microsoft.teams",
+        "com.hnc.Discord",
+        "com.tinyspeck.slackmacgap"
+    ]
+
+    var isEnabled: Bool = true
+
+    init(
+        mediaUsageDetector: MediaUsageDetecting = SystemMediaUsageDetector(),
+        frontmostApplicationProvider: @escaping () -> RunningApplicationContext? = {
+            guard let app = NSWorkspace.shared.frontmostApplication,
+                  let bundleIdentifier = app.bundleIdentifier else {
+                return nil
+            }
+
+            return RunningApplicationContext(
+                bundleIdentifier: bundleIdentifier,
+                localizedName: app.localizedName ?? "Meeting app"
+            )
+        },
+        browserContextProvider: @escaping () -> BrowserMediaContext? = BrowserMediaInspector.frontmostContext,
+        frontmostBrowserNameProvider: @escaping () -> String? = BrowserMediaInspector.frontmostBrowserName
+    ) {
+        self.mediaUsageDetector = mediaUsageDetector
+        self.frontmostApplicationProvider = frontmostApplicationProvider
+        self.browserContextProvider = browserContextProvider
+        self.frontmostBrowserNameProvider = frontmostBrowserNameProvider
+    }
+
+    func status(using settings: AppSettings) -> DetectorStatus {
+        guard isEnabled, settings.smartPauseMeetings else { return .inactive }
+        let mediaDevicesInUse = mediaUsageDetector.cameraOrMicrophoneInUse()
+
+        if let app = frontmostApplicationProvider(),
+           meetingBundleIdentifiers.contains(app.bundleIdentifier) {
+            return Self.foregroundAppStatus(
+                bundleIdentifier: app.bundleIdentifier,
+                appName: app.localizedName,
+                mediaDevicesInUse: mediaDevicesInUse
+            )
+        }
+
+        if let browserContext = browserContextProvider(),
+           let status = Self.browserStatus(
+            context: browserContext,
+            frontmostBrowserName: browserContext.appName,
+            mediaDevicesInUse: mediaDevicesInUse
+           ) {
+            return status
+        }
+
+        if let status = Self.browserStatus(
+            context: nil,
+            frontmostBrowserName: frontmostBrowserNameProvider(),
+            mediaDevicesInUse: mediaDevicesInUse
+        ) {
+            return status
+        }
+
+        return .inactive
     }
 
     static func foregroundAppStatus(bundleIdentifier: String, appName: String, mediaDevicesInUse: Bool) -> DetectorStatus {

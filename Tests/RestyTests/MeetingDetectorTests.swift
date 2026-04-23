@@ -2,6 +2,75 @@ import XCTest
 @testable import Resty
 
 final class MeetingDetectorTests: XCTestCase {
+    func testStatusPausesForSlackWhenInjectedMediaUsageIsActive() {
+        let detector = MeetingDetector(
+            mediaUsageDetector: StubMediaUsageDetector(isActive: true),
+            frontmostApplicationProvider: {
+                RunningApplicationContext(
+                    bundleIdentifier: "com.tinyspeck.slackmacgap",
+                    localizedName: "Slack"
+                )
+            },
+            browserContextProvider: { nil },
+            frontmostBrowserNameProvider: { nil }
+        )
+
+        XCTAssertEqual(
+            detector.status(using: AppSettings()),
+            DetectorStatus(isActive: true, reason: "Slack call active")
+        )
+    }
+
+    func testStatusDoesNotPauseForSlackWhenInjectedMediaUsageIsInactive() {
+        let detector = MeetingDetector(
+            mediaUsageDetector: StubMediaUsageDetector(isActive: false),
+            frontmostApplicationProvider: {
+                RunningApplicationContext(
+                    bundleIdentifier: "com.tinyspeck.slackmacgap",
+                    localizedName: "Slack"
+                )
+            },
+            browserContextProvider: { nil },
+            frontmostBrowserNameProvider: { nil }
+        )
+
+        XCTAssertEqual(detector.status(using: AppSettings()), .inactive)
+    }
+
+    func testStatusPausesForBrowserWhenTabAutomationFailsButMediaUsageIsActive() {
+        let detector = MeetingDetector(
+            mediaUsageDetector: StubMediaUsageDetector(isActive: true),
+            frontmostApplicationProvider: { nil },
+            browserContextProvider: { nil },
+            frontmostBrowserNameProvider: { "Firefox" }
+        )
+
+        XCTAssertEqual(
+            detector.status(using: AppSettings()),
+            DetectorStatus(isActive: true, reason: "Firefox using camera or mic")
+        )
+    }
+
+    func testStatusSkipsMediaProbeWhenMeetingPauseIsDisabled() {
+        let mediaUsageDetector = CountingMediaUsageDetector(isActive: true)
+        var settings = AppSettings()
+        settings.smartPauseMeetings = false
+        let detector = MeetingDetector(
+            mediaUsageDetector: mediaUsageDetector,
+            frontmostApplicationProvider: {
+                RunningApplicationContext(
+                    bundleIdentifier: "com.tinyspeck.slackmacgap",
+                    localizedName: "Slack"
+                )
+            },
+            browserContextProvider: { nil },
+            frontmostBrowserNameProvider: { nil }
+        )
+
+        XCTAssertEqual(detector.status(using: settings), .inactive)
+        XCTAssertEqual(mediaUsageDetector.callCount, 0)
+    }
+
     func testSlackDoesNotPauseWithoutMediaUsage() {
         let status = MeetingDetector.foregroundAppStatus(
             bundleIdentifier: "com.tinyspeck.slackmacgap",
@@ -64,5 +133,27 @@ final class MeetingDetectorTests: XCTestCase {
         )
 
         XCTAssertNil(status)
+    }
+}
+
+private struct StubMediaUsageDetector: MediaUsageDetecting {
+    let isActive: Bool
+
+    func cameraOrMicrophoneInUse() -> Bool {
+        isActive
+    }
+}
+
+private final class CountingMediaUsageDetector: MediaUsageDetecting {
+    private(set) var callCount = 0
+    private let isActive: Bool
+
+    init(isActive: Bool) {
+        self.isActive = isActive
+    }
+
+    func cameraOrMicrophoneInUse() -> Bool {
+        callCount += 1
+        return isActive
     }
 }
